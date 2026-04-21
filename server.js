@@ -44,4 +44,29 @@ app.post("/bot", async (req, res) => {
   res.sendStatus(200);
 });
 
+const API_KEY = process.env.API_KEY;
+async function getGames() {
+  const res = await axios.get(
+    "https://v3.football.api-sports.io/fixtures?live=all",
+    {
+      headers: { "x-apisports-key": API_KEY }
+    }
+  );
+
+  return res.data.response;
+}
+function hasRedCard(events) {
+  return events?.some(e => e.type === "Card" && e.detail === "Red Card");
+}
+setInterval(async () => {
+  const games = await getGames();
+
+  for (const g of games) {
+    if (hasRedCard(g.events)) {
+      const msg = `🚨 JOGO COM EXPULSÃO\n\n${g.teams.home.name} vs ${g.teams.away.name}`;
+
+      await sendMessage(SEU_CHAT_ID, msg);
+    }
+  }
+}, 20000);
 app.listen(PORT, () => console.log("Rodando"));
