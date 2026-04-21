@@ -41,7 +41,21 @@ app.post("/bot", async (req, res) => {
   if (text === "/stats") {
     await sendMessage(chatId, `📊 Green: ${stats.green} | Red: ${stats.red}`);
   }
+if (text === "/jogos") {
+  const games = await getGames();
 
+  if (!games || games.length === 0) {
+    await sendMessage(chatId, "Nenhum jogo ao vivo agora.");
+    return;
+  }
+
+  const lista = games
+    .slice(0, 5)
+    .map(g => `${g.teams.home.name} vs ${g.teams.away.name}`)
+    .join("\n");
+
+  await sendMessage(chatId, `⚽ Jogos ao vivo:\n\n${lista}`);
+}
   res.sendStatus(200);
 });
 
