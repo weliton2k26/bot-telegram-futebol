@@ -17,7 +17,7 @@ async function sendMessage(chatId, text) {
   });
 }
 
-app.post("/bot", async (req, res) => {
+post("/bot", async (req, res) => {
   const msg = req.body.message;
   if (!msg) return res.sendStatus(200);
 
@@ -57,6 +57,6 @@ if (text === "/jogos") {
   await sendMessage(chatId, `⚽ Jogos ao vivo:\n\n${lista}`);
 }
   res.sendStatus(200);
-});
+})
 
 app.listen(PORT, () => console.log("Rodando"));
