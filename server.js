@@ -12,7 +12,7 @@ let stats = { green: 0, red: 0 };
 async function sendMessage(chatId, text) {
   await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
     chat_id: chatId,
-    text
+    text: text,
   });
 }
 
@@ -29,16 +29,19 @@ app.post("/bot", async (req, res) => {
 
   if (text === "/green") {
     stats.green++;
-    await sendMessage(chatId, "✅ Green");
+    await sendMessage(chatId, "✅ Green!");
   }
 
   if (text === "/red") {
     stats.red++;
-    await sendMessage(chatId, "❌ Red");
+    await sendMessage(chatId, "❌ Red!");
   }
 
   if (text === "/stats") {
-    await sendMessage(chatId, `📊 Green: ${stats.green} | Red: ${stats.red}`);
+    await sendMessage(
+      chatId,
+      `📊 Green: ${stats.green} | Red: ${stats.red}`
+    );
   }
 
   res.sendStatus(200);
