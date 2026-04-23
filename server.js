@@ -17,16 +17,25 @@ async function sendMessage(chatId, text) {
   });
 }
 
+// 🔥 NOVA FUNÇÃO (FUNCIONA NO PLANO GRÁTIS)
 async function getGames() {
   try {
+    const today = new Date().toISOString().split("T")[0];
+
     const res = await axios.get(
-      "https://v3.football.api-sports.io/fixtures?live=all",
+      `https://v3.football.api-sports.io/fixtures?date=${today}`,
       {
         headers: { "x-apisports-key": API_KEY }
       }
     );
 
-    return res.data.response;
+    // 🔥 FILTRA SÓ JOGOS AO VIVO
+    const liveGames = res.data.response.filter(g =>
+      g.fixture.status.short === "1H" ||
+      g.fixture.status.short === "2H"
+    );
+
+    return liveGames;
 
   } catch (err) {
     console.log("Erro API:", err.message);
