@@ -8,8 +8,6 @@ const PORT = process.env.PORT || 3000;
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const API_KEY = process.env.API_KEY;
 
-let stats = { green: 0, red: 0 };
-
 async function sendMessage(chatId, text) {
   await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
     chat_id: chatId,
@@ -17,7 +15,7 @@ async function sendMessage(chatId, text) {
   });
 }
 
-// 🔥 NOVA FUNÇÃO (FUNCIONA NO PLANO GRÁTIS)
+// 🔥 FUNÇÃO DA API
 async function getGames() {
   try {
     const today = new Date().toISOString().split("T")[0];
@@ -29,13 +27,9 @@ async function getGames() {
       }
     );
 
-    // 🔥 FILTRA SÓ JOGOS AO VIVO
-    const liveGames = res.data.response.filter(g =>
-      g.fixture.status.short === "1H" ||
-      g.fixture.status.short === "2H"
-    );
+    console.log("TOTAL JOGOS DO DIA:", res.data.response.length);
 
-    return liveGames;
+    return res.data.response;
 
   } catch (err) {
     console.log("Erro API:", err.message);
@@ -56,33 +50,15 @@ app.post("/bot", async (req, res) => {
       await sendMessage(chatId, "🤖 Bot ativo!");
     }
 
-    if (text === "/green") {
-      stats.green++;
-      await sendMessage(chatId, "✅ Green");
-    }
-
-    if (text === "/red") {
-      stats.red++;
-      await sendMessage(chatId, "❌ Red");
-    }
-
-    if (text === "/stats") {
-      await sendMessage(chatId, `📊 Green: ${stats.green} | Red: ${stats.red}`);
-    }
-
+    // 🔥 TESTE AQUI
     if (text === "/jogos") {
+      console.log("COMANDO /jogos RECEBIDO");
+
       const games = await getGames();
 
-      if (!games || games.length === 0) {
-        await sendMessage(chatId, "Nenhum jogo ao vivo agora.");
-      } else {
-        const lista = games
-          .slice(0, 5)
-          .map(g => `${g.teams.home.name} vs ${g.teams.away.name}`)
-          .join("\n");
+      console.log("RESULTADO:", games);
 
-        await sendMessage(chatId, `⚽ Jogos ao vivo:\n\n${lista}`);
-      }
+      await sendMessage(chatId, "Teste executado");
     }
 
   } catch (err) {
