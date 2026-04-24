@@ -15,9 +15,11 @@ async function sendMessage(chatId, text) {
   });
 }
 
-// 🔥 FUNÇÃO DA API
+// 🔥 FUNÇÃO COM DEBUG FORÇADO
 async function getGames() {
   try {
+    console.log("🔥 FUNÇÃO getGames FOI CHAMADA");
+
     const today = new Date().toISOString().split("T")[0];
 
     const res = await axios.get(
@@ -32,7 +34,7 @@ async function getGames() {
     return res.data.response;
 
   } catch (err) {
-    console.log("Erro API:", err.message);
+    console.log("ERRO NA API:", err.message);
     return [];
   }
 }
@@ -50,7 +52,6 @@ app.post("/bot", async (req, res) => {
       await sendMessage(chatId, "🤖 Bot ativo!");
     }
 
-    // 🔥 TESTE AQUI
     if (text === "/jogos") {
       console.log("COMANDO /jogos RECEBIDO");
 
